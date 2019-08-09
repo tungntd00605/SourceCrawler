@@ -10,9 +10,11 @@ import zombie.crawler.utils.ConstantVar;
 
 public class Main {
     public static void main(String[] args) {
+        System.out.println("start crawl links");
         SourceCrawler sourceCrawler = new SourceCrawler();
         sourceCrawler.addArticlesURLToQueue();
         //or
+        System.out.println("start crawl articles");
         ArticleCrawler articleCrawler = new ArticleCrawler();
         articleCrawler.crawlArticles();
 

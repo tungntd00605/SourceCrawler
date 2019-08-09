@@ -28,24 +28,28 @@ public class ArticleCrawler {
 
                 String title = document.select(article.getCrawlerSource().getTitleSelector()).text();
                 String description = document.select(article.getCrawlerSource().getDescriptionSelector()).text();
-                String content = document.select(article.getCrawlerSource().getContentSelector()).text();
+                String content = document.select(article.getCrawlerSource().getContentSelector()).html();
                 String thumbnail = document.select(article.getCrawlerSource().getContentSelector()).select("img:first-child").attr("src");
+                String author = document.select(article.getCrawlerSource().getAuthorSelector()).text();
                 System.out.println(thumbnail);
                 if(thumbnail == null || thumbnail.isEmpty() || thumbnail.contains("base64")){
                     thumbnail = "https://i0.wp.com/www.freezkart.com/wp-content/uploads/2018/08/cauliflowers.jpg?fit=500%2C500&ssl=1";
                 }
-                article.setTitle(title);
-                article.setDescription(description);
-                article.setContent(content);
-                article.setThumbnail(thumbnail);
+                if(!title.isEmpty() && !description.isEmpty() && !content.isEmpty()){
+                    article.setTitle(title);
+                    article.setDescription(description);
+                    article.setContent(content);
+                    article.setThumbnail(thumbnail);
+                    article.setAuthor(author);
 
-                // Call API to save article
-                String body = Jsoup.connect(SAVE_ARTICLE_URL)
-                        .method(Connection.Method.POST)
-                        .header("Content-Type", "application/json")
-                        .requestBody(new Gson().toJson(article))
-                        .execute().body();
-                System.out.println(body);
+                    // Call API to save article
+                    String body = Jsoup.connect(SAVE_ARTICLE_URL)
+                            .method(Connection.Method.POST)
+                            .header("Content-Type", "application/json")
+                            .requestBody(new Gson().toJson(article))
+                            .execute().body();
+                    System.out.println(body);
+                }
             };
             String s = channel.basicConsume(ConstantVar.SOURCE_QUEUE, true, deliverCallback, consumerTag -> {
             });
